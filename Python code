@@ -1,0 +1,333 @@
+# Make a deck
+def Card_deck(card):
+    C = {'K':10,'Q':10,'J':10,1:1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,10:10}
+    return C[card]
+    
+# function for Player bank
+
+def Bank_player(Start,Bet,Betwon):
+    if Bet == 0:
+        Bank = Start
+    Bank = Bank
+    Bank = Bank+Bet
+    Bank = Bank+Betwon
+    return Bank
+    
+# function for AI bank
+
+def Bank_AI(Start,Bet,Betwon):
+    if Bet == 0:
+        Bank = Start
+    Bank = Bank
+    Bank -= Bet
+    Bank += Betwon
+    return Bank
+    
+# function to choose random cards from the deck for player and AI
+import random
+def Random_cards():
+    c = 'AKQJ123456789T'
+    r = random.choice(c)
+    n = '123456789'
+    a = 'AKQJN'
+    if r == 'T':
+        r = 10
+        return r
+    elif r in n: 
+        r = int(r)
+        return r
+    elif r in a:
+        r = r
+        return r
+
+# Main code 
+
+def Black_Jack():
+    import random
+    print ' Welcome to Black Jack\n Lets Start the game '
+    print 'How much are you starting with?'
+    global Bank
+    global Bankpl
+    global Bet
+    global BankAI
+    global sum_cards_player
+    global sum_cards_AI
+    global Betpl
+    global BetAI
+    Bankpl = int(raw_input())
+    BankAI = 1000000
+    print 'What is you bet?'
+    Betpl = int(raw_input())
+    BetAI = random.randint(0,5000)
+    Bankpl = Bankpl - Betpl
+    BankAI = BankAI - BetAI
+    count = 0
+    while count == 0:
+        
+        print 'Your bank after the bet has : ' + str(Bankpl)
+        print "AI's bank has : " + str(BankAI)
+        cards_player = [Random_cards(),Random_cards()]
+        cards_AI = [Random_cards(),Random_cards()]
+        print ' Your cards are: ' + str(cards_player)
+        show = True
+        raise_card = True
+        AI = True
+        player = True
+        j = 0
+        i = 0
+        winpl = 0
+        winAI = 0
+        loosepl = 0
+        looseAI = 0
+        while show == True: 
+            print "Player's turn\n"
+            while player: 
+                if j == 0:
+                    if 'A' in cards_player:
+
+                        print 'seems like you have an A in your pile of cards.\n'
+                        print 'what value would you give your A'
+                        u = str(raw_input())
+                        cards_player[cards_player.index('A')] += u
+                        sum_cards_player = int(cards_player[cards_player.index('A'+ u)][1:])+Card_deck(cards_player[not cards_player.index('A'+ u)])
+                        print 'your card sum is equal to : ' + str(sum_cards_player)
+                    else: 
+                        sum_cards_player = int(Card_deck(cards_player[0])) + int(Card_deck(cards_player[1]))
+                        print 'your card sum is equal to : ' + str(sum_cards_player)
+
+                    if sum_cards_player == 21:
+                        print 'Player show'
+                        show = False
+                        player = False
+                        winpl = 1
+                        break
+
+                    if  sum_cards_player > 21:
+                        print 'you loose'
+                        player = False
+                        show = False
+                        loosepl = 1
+                        break
+
+
+                    print 'would you like to raise the bet? y/n '
+                    raise_bet = raw_input()
+                    if raise_bet == 'y':
+                        print 'how much ?'
+                        Bet = int(raw_input())
+                        Betpl += Bet
+                        print 'your bet is : ' + str(Betpl)
+                        Bankpl = Bankpl-Betpl
+                        print 'your bank has : ' + str(Bankpl)
+                    else: pass
+                j = 1    
+
+                while raise_card == True:
+                    print 'would you like to take another card? : y/n'
+                    another_card = raw_input()
+                    if another_card == 'y':
+                        cards_player += [Random_cards()]
+                        print 'Your new cards are : ' + str(cards_player)
+
+                        if 'A' in cards_player:
+
+                            print 'seems like you have an A in your pile of cards.\n'
+                            print 'what value would you give your A'
+                            u = str(raw_input())
+                            cards_player[cards_player.index('A')] += u
+                            sum_cards_player += int(cards_player[cards_player.index('A'+ u)][1:])
+                            print 'your card sum is equal to : ' + str(sum_cards_player)
+                        else: 
+                            sum_cards_player += int(Card_deck(cards_player[-1]))
+                            print 'your card sum is equal to : ' + str(sum_cards_player)
+                    elif another_card == 'n':
+                        print 'would you like to pass your chance? y/n\n'
+                        pas = raw_input()
+                        if pas == 'y':
+                            raise_card = False
+                            show = False
+                            player = False
+                            break
+                        else: pass
+
+                    if sum_cards_player == 21:
+                        print 'Player show'
+                        winpl = 1
+                        show = False
+                        raise_card = False
+                        player = False
+                        AI = False
+                        break
+
+                    if  sum_cards_player > 21:
+                        print 'you loose'
+                        loosepl = 1
+                        show = False
+                        raise_card = False
+                        player = False
+                        AI = False
+                        break
+
+
+            while AI == True: 
+                if i == 0:
+                    if 'A' in cards_AI :
+                        for i in [1,10]:
+                            cards_AI[cards_AI.index('A')] += str(i)
+                            if int(cards_AI[cards_AI.index('A'+str(i))][1])+Card_deck(cards_AI[not cards_AI.index('A'+str(i))[1]]) > 21:
+                                continue
+                            else: 
+                                cards_AI[cards_AI.index('A')] += str(i)
+                                sum_cards_AI = int(cards_AI[cards_AI.index('A' + str(i))][1:])+Card_deck(cards_AI[not cards_AI.index('A' + str(i))]) 
+                                
+                    print 'AI cards' + str(cards_AI)
+                    sum_cards_AI =  int(Card_deck(cards_AI[0])) + int(Card_deck(cards_AI[1])) 
+                    print 'sum of AI cards' + str(sum_cards_AI)
+                    if sum_cards_AI == 21:
+                        print 'AI show'
+                        winAI = 1
+                        show = False
+                        break
+                    if sum_cards_AI > 21:
+                        print 'AI looses'
+                        looseAI = 1
+                        show = False
+                        break
+
+                    rand = ['y','n']   
+                    raise_bet = random.choice(rand)
+                    if raise_bet == 'y':
+                        Bet1 = random.randint(0,5000)
+                        BetAI += Bet1
+                        print "AI's bet is : " + str(Bet1)
+                        BankAI = BankAI - BetAI
+                        print 'AI bank has : ' + str(BankAI)
+                    elif raise_bet == 'n':
+                        pass
+                i = 1
+                while sum_cards_AI < 21:
+
+                    another_card1 = random.choice(rand)
+                    if another_card1 == 'y':
+                        cards_AI += [Random_cards()]
+                        print 'AI card' + str(cards_AI)
+                        if 'A' in cards_AI :
+                            for i in [1,10]:
+                                if int(cards_AI[cards_AI.index('A'+str(i))][1:])+int(Card_deck(cards_AI[not cards_AI.index('A'+str(i))])) > 21:
+                                    continue
+
+                                else: 
+                                    sum_cards_AI += int(cards_AI[cards_AI.index('A' + str(i))][1:])
+                                    print 'AI cards' + str(cards_AI)
+                            
+                        print 'AI cards' + str(cards_AI)        
+                        sum_cards_AI += Card_deck(cards_AI[-1])
+                        print 'AI sum of cards : ' + str(sum_cards_AI)
+                             
+                    elif another_card1 == 'n':
+                        print 'AI previous cards' + str(cards_AI)
+                        AI = False
+                        break
+                if sum_cards_AI == 21:
+                    print 'AI show'
+                    show = False
+                    AI = False
+                    winAI = 1
+                    break
+                elif sum_cards_AI > 21:
+                    looseAI = 1
+                    show = False
+                    AI = False
+        if winpl == 0 and winAI == 0 and loosepl != 1 and looseAI != 1:
+            
+            if sum_cards_player ==  sum_cards_AI:
+                print ' The game is a tie'
+                Betwon1 = Betpl
+                Betwon2 = BetAI
+                Bankpl = Bankpl+Betwon1
+                BankAI = BankAI+Betwon2
+                print "player's Bank : " + str(Bankpl)
+                print "AI's Bank : " + str(BankAI)
+
+            elif sum_cards_player == 21 and sum_cards_AI == 21:
+                print ' The game is a tie'
+                Betwon1 = Betpl
+                Betwon2 = BetAI
+                Bankpl = Bankpl+Betwon1
+                BankAI = BankAI+Betwon2
+                print "player's Bank : " + str(Bankpl)
+                print "AI's Bank : " + str(BankAI)
+           
+            elif sum_cards_player < 21 and sum_cards_AI > 21:
+                print 'player wins'
+                Betwon = Betpl+Betpl
+                Bankpl = Bankpl+Betwon
+                print "player's Bank : " + str(Bankpl)
+                print "AI's Bank : " + str(BankAI)
+
+            elif sum_cards_player > sum_cards_AI :
+                print 'player wins'
+                Betwon = Betpl+BetAI
+                Bankpl = Bankpl+Betwon
+                print "player's Bank : " + str(Bankpl)
+                print "AI's Bank : " + str(BankAI)
+            elif sum_cards_player == 21:
+                print "player wins"
+                Betwon = Betpl+Betpl
+                Bankpl = Bankpl+Betwon
+                print "player's Bank : " + str(Bankpl)
+                print "AI's Bank : " + str(BankAI)
+            elif sum_cards_player > 21 and sum_cards_AI < 21:
+                print "AI is the winner"
+                Betwon = Betpl+BetAI
+                BankAI = BankAI+Betwon
+                print "player's Bank : " + str(Bankpl)
+                print "AI's Bank : " + str(BankAI)
+
+            elif sum_cards_player < sum_cards_AI:
+                print "AI is the winner"
+                Betwon = Betpl+BetAI
+                BankAI = BankAI+Betwon
+                print "player's Bank : " + str(Bankpl)
+                print "AI's Bank : " + str(BankAI)
+            elif sum_cards_AI == 21 :
+                print "AI is the winner"
+                Betwon = Betpl+BetAI
+                BankAI = BankAI+Betwon
+                print "player's Bank : " + str(Bankpl)
+                print "AI's Bank : " + str(BankAI)
+        elif loosepl == 1 :
+            print "AI is the winner"
+            Betwon = Betpl+BetAI
+            BankAI = BankAI+Betwon
+            print "player's Bank : " + str(Bankpl)
+            print "AI's Bank : " + str(BankAI)
+        elif looseAI == 1:
+            print "player wins"
+            Betwon = BetAI+Betpl
+            Bankpl = Bankpl+Betwon
+            print "player's Bank : " + str(Bankpl)
+            print "AI's Bank : " + str(BankAI)
+        elif winAI == 1:
+            print "AI is the winner"
+            Betwon = Betpl+BetAI
+            BankAI = BankAI+Betwon
+            print "player's Bank : " + str(Bankpl)
+            print "AI's Bank : " + str(BankAI)
+        elif winpl == 1:
+            print "player wins"
+            Betwon = Betpl+Betpl
+            Bankpl = Bankpl+Betwon
+            print "player's Bank : " + str(Bankpl)
+            print "AI's Bank : " + str(BankAI)
+
+        print 'would you like to play the game again? y/n'
+        play = raw_input()
+        if play == 'y':
+            count = 0
+        else: 
+            dict.clear
+            break
+
+        
+       
